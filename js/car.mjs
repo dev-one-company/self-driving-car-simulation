@@ -4,25 +4,43 @@ export class Car {
   constructor(x, y, width, height) {
     this.x = x;
     this.y = y;
-    this.speed = 2;
+
     this.width = width;
     this.height = height;
+
+    this.speed = 0;
+    this.maxSpeed = 3;
+    this.acceleration = 0.2;
+    this.friction = 0.05;
+
     this.controls = new Controls();
   }
 
   update() {
     if (this.controls.forward) {
-      this.y -= this.speed;
+      this.speed += this.acceleration;
     }
     if (this.controls.reverse) {
-      this.y += this.speed;
+      this.speed -= this.acceleration;
     }
-    if (this.controls.left) {
-      this.x -= this.speed;
+
+    if (this.speed > this.maxSpeed) {
+      this.speed = this.maxSpeed;
     }
-    if (this.controls.right) {
-      this.x += this.speed;
+
+    // turn more slow when going back
+    if (this.speed < -this.maxSpeed / 2) {
+      this.speed = -this.maxSpeed / 2;
     }
+
+    if (this.speed > 0) {
+      this.speed -= this.friction;
+    }
+    if (this.speed < 0) {
+      this.speed += this.friction;
+    }
+
+    this.y -= this.speed;
   }
 
   draw(ctx){
