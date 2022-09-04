@@ -62,7 +62,6 @@ export class Car {
 
     this.x -= Math.sin(this.angle) * this.speed;
     this.y -= Math.cos(this.angle) * this.speed;
-
   }
 
   update() {
