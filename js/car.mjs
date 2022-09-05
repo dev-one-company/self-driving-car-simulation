@@ -1,3 +1,4 @@
+import { Sensor } from './sensor.mjs';
 import { Controls } from './controls.mjs';
 
 export class Car {
@@ -14,6 +15,7 @@ export class Car {
     this.friction = 0.05;
     this.angle = 0;
 
+    this.sensor = new Sensor(this);
     this.controls = new Controls();
   }
 
@@ -66,6 +68,7 @@ export class Car {
 
   update() {
     this.#move();
+    this.sensor.update();
   }
 
   draw(ctx){
@@ -84,5 +87,7 @@ export class Car {
     ctx.fill();
 
     ctx.restore();
+
+    this.sensor.draw(ctx);
   }
 }
