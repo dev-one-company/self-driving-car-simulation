@@ -10,13 +10,13 @@ export function getIntersection(A, B, C, D) {
   if (bottom !== 0) {
     const t = tTop / bottom;
     const u = uTop / bottom;
-    
-    if (t >= 0 && t <= 1 && u >= 0 && u <=1 ) {
+
+    if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
       return {
         x: lerp(A.x, B.x, t),
         y: lerp(A.y, B.y, t),
-        offset: t
-      }
+        offset: t,
+      };
     }
   }
 
@@ -33,10 +33,17 @@ export function polysIntersect(poly1, poly2) {
         poly2[(j + 1) % poly2.length]
       );
 
-      if (touch)
-        return true;
+      if (touch) return true;
     }
   }
 
   return false;
+}
+
+export function getRGBA(value) {
+  const alpha = Math.abs(value);
+  const R = value < 0 ? 0 : 255;
+  const G = value > 0 ? 0 : 255;
+  const B = G;
+  return "rgba(" + R + "," + G + "," + B + "," + alpha + ")";
 }

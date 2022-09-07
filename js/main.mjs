@@ -1,13 +1,17 @@
 import { Car } from "./car.mjs";
 import { Road } from "./road.mjs";
+import { Visualizer } from "./visualizer.mjs";
 
-const canvas = document.querySelector("#canvas");
+const carCanvas = document.querySelector("#car-canvas");
+carCanvas.width = 200;
 
-canvas.width = 200;
+const networkCanvas = document.querySelector("#network-canvas");
+networkCanvas.width = 300;
 
-const ctx = canvas.getContext("2d");
+const carCtx = carCanvas.getContext("2d");
+const networkCtx = networkCanvas.getContext("2d");
 
-const road = new Road(canvas.width / 2, canvas.width * 0.9);
+const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 const car = new Car("AI", road.getLaneCenter(1), 100);
 
 const traffic = [new Car("DUMMY", road.getLaneCenter(1), -100)];
@@ -19,20 +23,24 @@ function animate() {
 
   car.update(road.borders, traffic);
 
-  canvas.height = window.innerHeight;
+  carCanvas.height = window.innerHeight;
+  networkCanvas.height = window.innerHeight;
 
-  ctx.save();
-  ctx.translate(0, -car.y + canvas.height * 0.7);
+  carCtx.save();
+  carCtx.translate(0, -car.y + carCanvas.height * 0.7);
 
-  road.draw(ctx);
+  road.draw(carCtx);
 
   traffic.forEach((trafficCar) => {
-    trafficCar.draw(ctx);
+    trafficCar.draw(carCtx);
   });
 
-  car.draw(ctx);
+  car.draw(carCtx);
 
-  ctx.restore();
+  carCtx.restore();
+
+  Visualizer.drawNetwork(networkCtx, car.brain);
+
   requestAnimationFrame(animate);
 }
 
