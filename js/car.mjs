@@ -1,11 +1,12 @@
 import { Sensor } from "./sensor.mjs";
 import { Controls } from "./controls.mjs";
 import { polysIntersect } from "./utils.mjs";
+import { NeuralNetwork } from "./brain/neural-network.mjs";
 
 export class Car {
   /**
    * car
-   * @param {("DUMMY" | "CONTROLLED")} type car type
+   * @param {("DUMMY" | "CONTROLLED" | "AI")} type car type
    * @param {number} x x position
    * @param {number} y y position
    * @param {number} width car width
@@ -19,18 +20,26 @@ export class Car {
     this.height = height;
 
     this.speed = 0;
-    this.maxSpeed = type === "CONTROLLED" ? 3 : 2;
+    this.maxSpeed = ["CONTROLLED", "AI"].includes(type) ? 3 : 2;
     this.acceleration = 0.1;
     this.friction = 0.05;
     this.angle = 0;
     this.damaged = false;
     this.type = type;
 
-    this.sensor = new Sensor(this, {
-      rayCount: 5,
-      raySpread: Math.PI / 2,
-      rayLength: 150,
-    });
+    this.useBrain = type === "AI";
+
+    if (type !== "DUMMY") {
+      this.sensor = new Sensor(this, {
+        rayCount: 5,
+        raySpread: Math.PI / 2,
+        rayLength: 150,
+      });
+      this.brain = new NeuralNetwork([this.sensor.rayCount, 6, 4]);
+    } else {
+      this.sensor = null;
+      this.brain = null;
+    }
 
     this.controls = new Controls(type);
   }
@@ -118,8 +127,20 @@ export class Car {
       this.damaged = this.#assessDamage(roadBorders, traffic);
     }
 
-    if (this.type !== "DUMMY") {
+    if (this.sensor) {
       this.sensor.update(roadBorders, traffic);
+      const offsets = this.sensor.readings.map((reading) =>
+        reading === null ? 0 : 1 - reading.offset
+      );
+
+      const outputs = NeuralNetwork.feedForward(offsets, this.brain);
+
+      if (this.useBrain) {
+        this.controls.forward = outputs[0];
+        this.controls.left = outputs[1];
+        this.controls.right = outputs[2];
+        this.controls.reverse = outputs[3];
+      }
     }
   }
 
@@ -146,7 +167,7 @@ export class Car {
 
     ctx.fill();
 
-    if (this.type !== "DUMMY") {
+    if (this.sensor) {
       this.sensor.draw(ctx, this.damaged);
     }
   }

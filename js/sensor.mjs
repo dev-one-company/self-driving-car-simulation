@@ -18,6 +18,9 @@ export class Sensor {
     this.raySpread = raySpread;
 
     this.rays = [];
+    /**
+     * @type {{x: number, y: number, offset: number}[]}
+     */
     this.readings = [];
   }
 
