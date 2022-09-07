@@ -60,6 +60,13 @@ export class Visualizer {
       ctx.arc(x, bottom, nodeRadius * 0.6, 0, Math.PI * 2);
       ctx.fillStyle = getRGBA(inputs[i]);
       ctx.fill();
+
+      ctx.beginPath();
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "white";
+      ctx.font = "400 8px sans-serif";
+      ctx.fillText(inputs[i].toFixed(2), x, bottom);
     }
 
     for (let i = 0; i < outputs.length; i++) {
@@ -85,12 +92,26 @@ export class Visualizer {
         ctx.beginPath();
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillStyle = 'white';
-        ctx.strokeStyle = 'red';
+        ctx.fillStyle = "white";
+        ctx.font = "500 8px sans-serif";
+        ctx.fillText(biases[i].toFixed(2), x, top - 25);
+
+        ctx.beginPath();
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "white";
+        ctx.strokeStyle = "red";
         ctx.font = "bold 15px sans-serif";
         ctx.fillText(outputLabels[i], x, top + nodeRadius * 0.1);
         ctx.lineWidth = 0.5;
         ctx.strokeText(outputLabels[i], x, top + nodeRadius * 0.1);
+      } else {
+        ctx.beginPath();
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "white";
+        ctx.font = "400 8px sans-serif";
+        ctx.fillText(biases[i].toFixed(2), x, top);
       }
     }
   }
