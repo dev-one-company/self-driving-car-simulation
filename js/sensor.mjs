@@ -67,39 +67,41 @@ export class Sensor {
     return touches.find(touch => touch.offset = minOffset);
   }
 
-  draw(ctx) {
-    for (let i = 0; i < this.rayCount; i++) {
-      let end = this.rays[i][1];
+  draw(ctx, damaged = false) {
+    if (!damaged) {
+      for (let i = 0; i < this.rayCount; i++) {
+        let end = this.rays[i][1];
 
-      if (this.readings[i]) {
-        end = this.readings[i];
+        if (this.readings[i]) {
+          end = this.readings[i];
+        }
+
+        ctx.beginPath();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "yellow";
+        ctx.moveTo(
+          this.rays[i][0].x,
+          this.rays[i][0].y,
+        );
+        ctx.lineTo(
+          end.x,
+          end.y,
+        );
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "red";
+        ctx.moveTo(
+          this.rays[i][1].x,
+          this.rays[i][1].y,
+        );
+        ctx.lineTo(
+          end.x,
+          end.y,
+        );
+        ctx.stroke();
       }
-
-      ctx.beginPath();
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = "yellow";
-      ctx.moveTo(
-        this.rays[i][0].x,
-        this.rays[i][0].y,
-      );
-      ctx.lineTo(
-        end.x,
-        end.y,
-      );
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = "red";
-      ctx.moveTo(
-        this.rays[i][1].x,
-        this.rays[i][1].y,
-      );
-      ctx.lineTo(
-        end.x,
-        end.y,
-      );
-      ctx.stroke();
     }
   }
 }

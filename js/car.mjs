@@ -1,5 +1,6 @@
 import { Sensor } from './sensor.mjs';
 import { Controls } from './controls.mjs';
+import { polysIntersect } from './utils.mjs'
 
 export class Car {
   constructor(x, y, width, height) {
@@ -14,6 +15,7 @@ export class Car {
     this.acceleration = 0.2;
     this.friction = 0.05;
     this.angle = 0;
+    this.damaged = false;
 
     this.sensor = new Sensor(this);
     this.controls = new Controls();
@@ -96,12 +98,30 @@ export class Car {
   }
 
   update(roadBorders) {
-    this.#move();
-    this.polygon = this.#createPolygon();
+    if (!this.damaged) {
+      this.#move();
+      this.polygon = this.#createPolygon();
+      this.damaged = this.#assessDamage(roadBorders);
+    }
+
     this.sensor.update(roadBorders);
   }
 
+  #assessDamage(roadBorders) {
+    return roadBorders.some(border => {
+      if (polysIntersect(this.polygon, border)) {
+        return true;
+      }
+    });
+  }
+
   draw(ctx){
+    if (this.damaged) {
+      ctx.fillStyle = "red";
+    } else {
+      ctx.fillStyle = "black";
+    }
+
     ctx.beginPath();
     ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
 
@@ -111,6 +131,6 @@ export class Car {
 
     ctx.fill();
 
-    this.sensor.draw(ctx);
+    this.sensor.draw(ctx, this.damaged);
   }
 }
