@@ -1,9 +1,17 @@
-import { Sensor } from './sensor.mjs';
-import { Controls } from './controls.mjs';
-import { polysIntersect } from './utils.mjs'
+import { Sensor } from "./sensor.mjs";
+import { Controls } from "./controls.mjs";
+import { polysIntersect } from "./utils.mjs";
 
 export class Car {
-  constructor(x, y, width, height) {
+  /**
+   * car
+   * @param {("DUMMY" | "CONTROLLED")} type car type
+   * @param {number} x x position
+   * @param {number} y y position
+   * @param {number} width car width
+   * @param {number} height car height
+   */
+  constructor(type = "DUMMY", x, y, width = 30, height = 50) {
     this.x = x;
     this.y = y;
 
@@ -11,19 +19,20 @@ export class Car {
     this.height = height;
 
     this.speed = 0;
-    this.maxSpeed = 3;
-    this.acceleration = 0.2;
+    this.maxSpeed = type === "CONTROLLED" ? 3 : 2;
+    this.acceleration = 0.1;
     this.friction = 0.05;
     this.angle = 0;
     this.damaged = false;
+    this.type = type;
 
     this.sensor = new Sensor(this, {
       rayCount: 5,
       raySpread: Math.PI / 2,
-      rayLength: 150
+      rayLength: 150,
     });
 
-    this.controls = new Controls();
+    this.controls = new Controls(type);
   }
 
   #createPolygon() {
@@ -109,18 +118,20 @@ export class Car {
       this.damaged = this.#assessDamage(roadBorders);
     }
 
-    this.sensor.update(roadBorders);
+    if (this.type !== "DUMMY") {
+      this.sensor.update(roadBorders);
+    }
   }
 
   #assessDamage(roadBorders) {
-    return roadBorders.some(border => {
+    return roadBorders.some((border) => {
       if (polysIntersect(this.polygon, border)) {
         return true;
       }
     });
   }
 
-  draw(ctx){
+  draw(ctx) {
     if (this.damaged) {
       ctx.fillStyle = "red";
     } else {
@@ -136,6 +147,8 @@ export class Car {
 
     ctx.fill();
 
-    this.sensor.draw(ctx, this.damaged);
+    if (this.type !== "DUMMY") {
+      this.sensor.draw(ctx, this.damaged);
+    }
   }
 }

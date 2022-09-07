@@ -1,15 +1,26 @@
 export class Controls {
-  constructor() {
+  /**
+   * listen keys
+   * @param {("DUMMY"|"CONTROLLED")} type if the controls are activated
+   */
+  constructor(type = "DUMMY") {
     this.forward = false;
     this.left = false;
     this.right = false;
     this.reverse = false;
 
-    this.#addKeyboardListeners();
+    switch (type) {
+      case "DUMMY":
+        this.forward = true;
+        break;
+      case "CONTROLLED":
+        this.#addKeyboardListeners();
+        break;
+    }
   }
 
   #addKeyboardListeners() {
-    document.onkeydown = event => {
+    document.onkeydown = (event) => {
       switch (event.key) {
         case "ArrowLeft":
           this.left = true;
@@ -24,8 +35,8 @@ export class Controls {
           this.reverse = true;
           break;
       }
-    }
-    document.onkeyup = event => {
+    };
+    document.onkeyup = (event) => {
       switch (event.key) {
         case "ArrowLeft":
           this.left = false;
@@ -40,6 +51,6 @@ export class Controls {
           this.reverse = false;
           break;
       }
-    }
+    };
   }
 }
