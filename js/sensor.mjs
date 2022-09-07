@@ -1,11 +1,18 @@
 import { lerp, getIntersection } from './utils.mjs';
 
 export class Sensor {
-  constructor(car) {
+  constructor(car, configs = {}) {
+    const defaultConfigs = {
+      rayCount: 3,
+      rayLength: 100,
+      raySpread: Math.PI / 4
+    }
+    const { rayCount, rayLength, raySpread } = { ...defaultConfigs, ...configs };
+    
     this.car = car;
-    this.rayCount = 3;
-    this.rayLength = 100;
-    this.raySpread = Math.PI / 4;
+    this.rayCount = rayCount;
+    this.rayLength = rayLength;
+    this.raySpread = raySpread;
 
     this.rays = [];
     this.readings = [];

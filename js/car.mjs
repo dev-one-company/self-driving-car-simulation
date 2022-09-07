@@ -17,7 +17,12 @@ export class Car {
     this.angle = 0;
     this.damaged = false;
 
-    this.sensor = new Sensor(this);
+    this.sensor = new Sensor(this, {
+      rayCount: 5,
+      raySpread: Math.PI / 2,
+      rayLength: 150
+    });
+
     this.controls = new Controls();
   }
 
