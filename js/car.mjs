@@ -111,24 +111,23 @@ export class Car {
     this.y -= Math.cos(this.angle) * this.speed;
   }
 
-  update(roadBorders) {
+  update(roadBorders, traffic) {
     if (!this.damaged) {
       this.#move();
       this.polygon = this.#createPolygon();
-      this.damaged = this.#assessDamage(roadBorders);
+      this.damaged = this.#assessDamage(roadBorders, traffic);
     }
 
     if (this.type !== "DUMMY") {
-      this.sensor.update(roadBorders);
+      this.sensor.update(roadBorders, traffic);
     }
   }
 
-  #assessDamage(roadBorders) {
-    return roadBorders.some((border) => {
-      if (polysIntersect(this.polygon, border)) {
-        return true;
-      }
-    });
+  #assessDamage(roadBorders, traffic = []) {
+    return (
+      roadBorders.some((border) => polysIntersect(this.polygon, border)) ||
+      traffic.some((element) => polysIntersect(this.polygon, element.polygon))
+    );
   }
 
   draw(ctx) {

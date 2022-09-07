@@ -18,10 +18,10 @@ const traffic = [
 
 function animate() {
   traffic.forEach((trafficCar) => {
-    trafficCar.update(road.borders);
+    trafficCar.update(road.borders, []);
   });
 
-  car.update(road.borders);
+  car.update(road.borders, traffic);
 
   canvas.height = window.innerHeight;
 
