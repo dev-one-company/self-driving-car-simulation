@@ -66,7 +66,7 @@ export class Visualizer {
       ctx.textBaseline = "middle";
       ctx.fillStyle = "white";
       ctx.font = "400 8px sans-serif";
-      ctx.fillText(inputs[i].toFixed(2), x, bottom);
+      ctx.fillText((inputs[i] || 0).toFixed(2), x, bottom);
     }
 
     for (let i = 0; i < outputs.length; i++) {

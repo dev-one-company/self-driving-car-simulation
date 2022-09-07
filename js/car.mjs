@@ -1,6 +1,6 @@
 import { Sensor } from "./sensor.mjs";
 import { Controls } from "./controls.mjs";
-import { polysIntersect } from "./utils.mjs";
+import { guid, polysIntersect } from "./utils.mjs";
 import { NeuralNetwork } from "./brain/neural-network.mjs";
 
 export class Car {
@@ -13,6 +13,8 @@ export class Car {
    * @param {number} height car height
    */
   constructor(type = "DUMMY", x, y, width = 30, height = 50) {
+    this.id = guid();
+
     this.x = x;
     this.y = y;
 
@@ -31,7 +33,7 @@ export class Car {
 
     if (type !== "DUMMY") {
       this.sensor = new Sensor(this, {
-        rayCount: 5,
+        rayCount: 10,
         raySpread: Math.PI / 2,
         rayLength: 150,
       });
@@ -151,11 +153,11 @@ export class Car {
     );
   }
 
-  draw(ctx) {
+  draw(ctx, drawSensors = false, best = false) {
     if (this.damaged) {
       ctx.fillStyle = "red";
     } else {
-      ctx.fillStyle = "black";
+      ctx.fillStyle = best ? "green" : "black";
     }
 
     ctx.beginPath();
@@ -167,7 +169,7 @@ export class Car {
 
     ctx.fill();
 
-    if (this.sensor) {
+    if (this.sensor && drawSensors) {
       this.sensor.draw(ctx, this.damaged);
     }
   }
